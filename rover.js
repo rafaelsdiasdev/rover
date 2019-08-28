@@ -1,6 +1,5 @@
 // Rover Object Goes Here
 
-// ======================
 let rover = {
   direction: "N",
   name: "rover",
@@ -11,8 +10,6 @@ let rover = {
   ]
 }
 
-// ======================
-
 let trover = {
   direction: "N",
   name: "trover",
@@ -22,6 +19,7 @@ let trover = {
     [9, 9]
   ]
 }
+
 // Rovers swap
 let selected = rover
 
