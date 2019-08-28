@@ -6,7 +6,7 @@ let rover = {
   name: "rover",
   x: 0,
   y: 0,
-  travelLog: [
+  path: [
     [0, 0]
   ]
 }
@@ -18,24 +18,27 @@ let trover = {
   name: "trover",
   x: 9,
   y: 9,
-  travelLog: [
+  path: [
     [9, 9]
   ]
 }
-// Troca de Rovers
-let select = rover
+// Rovers swap
+let selected = rover
 
-function selectRover() {
-  if (select === rover) {
-    select = trover
-    console.log(`Select: ${select.name}`)
-  }else{
-    select = rover
-    console.log(`Select: ${select.name}`)
+function selectedRover() {
+  if (selected === rover) {
+    selected = trover
+    grid[selected.x][selected.y] = "T"
+    console.log(`selected: ${selected.name}`)
+    console.log(`${selected.name} direction ${selected.direction}`)
+  } else {
+    selected = rover
+    grid[selected.x][selected.y] = "R"
+    console.log(`selected: ${selected.name}`)
+    console.log(`${selected.name} direction ${selected.direction}`)
   }
-  grid[select.x][select.y] = "-"
+  grid[selected.x][selected.y] = "-"
 }
-  
 
 // ======================
 
@@ -51,242 +54,197 @@ for (let i = 0; i < 10; i++) {
 
 // ======================
 
-// Obstaculo
+// Obstacle
 grid[5][3] = "O"
 grid[4][8] = "O"
 grid[2][1] = "O"
 grid[7][5] = "O"
 grid[2][6] = "O"
 
-function obstacle(select) {
-  switch (select.direction) {
-    case "N":
-      select.x = select.x + 1
-      break
-    case "E":
-      select.y = select.y - 1
-      break
-    case "S":
-      select.x = select.x - 1
-      break
-    case "W":
-      select.y = select.y + 1
-      break
-  }
-}
+// ======================
 
 // ======================
 
-// Limites
-
-function limits(select) {
-  switch (select.direction) {
-    case "N":
-      select.x = select.x + 1
-      break
-    case "E":
-      select.y = select.y - 1
-      break
-    case "S":
-      select.x = select.x - 1
-      break
-    case "W":
-      select.y = select.y + 1
-      break
-  }
-}
-
-// ======================
-
-// Virar a esquerda
-function turnLeft(select) {
-  if (select.direction === "N") {
-    select.direction = "W"
-  } else if (select.direction === "W") {
-    select.direction = "S"
-  } else if (select.direction === "S") {
-    select.direction = "E"
-  } else if (select.direction === "E") {
-    select.direction = "N"
+// Turn Left
+function turnLeft(selected) {
+  if (selected.direction === "N") {
+    selected.direction = "W"
+  } else if (selected.direction === "W") {
+    selected.direction = "S"
+  } else if (selected.direction === "S") {
+    selected.direction = "E"
+  } else if (selected.direction === "E") {
+    selected.direction = "N"
   }
   console.log("turnLeft was called!")
-  console.log(`${select.name} direction ${select.direction}`)
+  console.log(`${selected.name} direction ${selected.direction}`)
 }
 
 // ======================
 
-// Virar a direita
-function turnRight(select) {
-  if (select.direction === "N") {
-    select.direction = "E"
-  } else if (select.direction === "E") {
-    select.direction = "S"
-  } else if (select.direction === "S") {
-    select.direction = "W"
-  } else if (select.direction === "W") {
-    select.direction = "N"
+// Turn Right
+function turnRight(selected) {
+  if (selected.direction === "N") {
+    selected.direction = "E"
+  } else if (selected.direction === "E") {
+    selected.direction = "S"
+  } else if (selected.direction === "S") {
+    selected.direction = "W"
+  } else if (selected.direction === "W") {
+    selected.direction = "N"
   }
   console.log("turnRight was called!")
-  console.log(`${select.name} direction ${select.direction}`)
+  console.log(`${selected.name} direction ${selected.direction}`)
 }
 
 // ======================
 
-
-
-// Movimentar para frente
-function moveForward(select) {
-  if (select.y >= 0 && select.y <= 9 && select.x >= 0 && select.x <= 10) {
-    switch (select.direction) {
+// Move Forward
+function moveForward(selected) {
+  if (selected.x >= 0 && selected.x < 10 && selected.y >= 0 && selected.y < 10) {
+    switch (selected.direction) {
       case "N":
-        console.log(`${select.name} is facing North`)
-        select.x--
-        if (select.x === -1 || select.x === 10) {
-          limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          obstacle(select)
+        console.log(`${selected.name} is facing North`)
+        if (selected.x - 1 < 0) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x - 1][selected.y] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x - 1][selected.y] === "R" || grid[selected.x - 1][selected.y] === "T") {
+          console.log("be careful!")
         } else {
+          selected.x--
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
       case "E":
-        console.log(`${select.name} is facing East`)
-        select.y++
-        if (select.x === -1 || select.x === 10) {
-          limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          obstacle(select)
+        console.log(`${selected.name} is facing East`)
+        if (selected.y + 1 > 9) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x][selected.y + 1] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x][selected.y + 1] === "R" || grid[selected.x][selected.y + 1] === "T") {
+          console.log("be careful!")
         } else {
+          selected.y++
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
       case "S":
-        console.log(`${select.name} is facing South`)
-        select.x++
-        if (select.x === -1 || select.x === 10) {
-          limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          obstacle(select)
+        console.log(`${selected.name} is facing South`)
+        if (selected.x + 1 > 9) {
+          console.log("There's nothing hereeee")
+        } else if (grid[selected.x + 1][selected.y] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x + 1][selected.y] === "R" || grid[selected.x + 1][selected.y] === "T") {
+          console.log("be careful!")
         } else {
+          selected.x++
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
       case "W":
-        console.log(`${select.name} is facing West`)
-        select.y--
-        if (select.x === -1 || select.x === 10) {
-          limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          obstacle(select)
+        console.log(`${selected.name} is facing West`)
+        if (selected.y - 1 < 0) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x][selected.y - 1] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x][selected.y - 1] === "R" || grid[selected.x][selected.y - 1] === "T") {
+          console.log("be careful!")
         } else {
-          console.log("moveForward was called")
+          selected.y--
+          console.log("moveForwaaard was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
     }
-    select.travelLog.push([select.x, select.y])
+    selected.path.push([selected.x, selected.y])
   }
 }
 
 // ======================
 
-// Movimentar para trás
-function moveBackwards(select) {
-  if (select.y >= 0 && select.y <= 9 && select.x >= 0 && select.x <= 10) {
-    switch (select.direction) {
+// Move Backwards
+function moveBackwards(selected) {
+  if (selected.x >= 0 && selected.x < 10 && selected.y >= 0 && selected.y < 10) {
+    switch (selected.direction) {
       case "N":
-        console.log(`${select.name} is facing North`)
-        select.x++
-        if (select.x === -1 || select.x === 10) {
-          !limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          !obstacle(select)
+        console.log(`${selected.name} is facing North`)
+        if (selected.x + 1 > 10) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x + 1][selected.y] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x + 1][selected.y] === "R" || grid[selected.x + 1][selected.y] === "T") {
+          selected.x++
+          console.log("be careful!")
         } else {
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
       case "E":
-        console.log(`${select.name} is facing East`)
-        select.y--
-        if (select.x === -1 || select.x === 10) {
-          !limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          !obstacle(select)
+        console.log(`${selected.name} is facing East`)
+        if (selected.y - 1 < 0) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x][selected.y - 1] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x][selected.y - 1] === "R" || grid[selected.x][selected.y - 1] === "T") {
+          console.log("be careful!")
         } else {
+          selected.y--
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
       case "S":
-        console.log(`${select.name} is facing South`)
-        select.x--
-        if (select.x === -1 || select.x === 10) {
-          !limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          !obstacle(select)
+        console.log(`${selected.name} is facing South`)
+        if (selected.x + 1 < 10) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x][selected.y] === "O") {
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x + 1][selected.y] === "R" || grid[selected.x - 1][selected.y] === "T") {
+          console.log("be careful!")
         } else {
+          selected.x++
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
       case "W":
-        console.log(`${select.name} is facing West`)
-        select.y++
-        if (select.x === -1 || select.x === 10) {
-          !limits(select)
-          console.log("There's nothing here!")
-        } else if (select.x === 7 && select.y === 5 || select.x === 5 && select.y === 3 ||
-          select.x === 4 && select.y === 8 || select.x === 2 && select.y === 1 || select.x === 2 && select.y === 6) {
-          !obstacle(select)
+        console.log(`${selected.name} is facing West`)
+        if (selected.y + 1 > 9) {
+          console.log("There's nothing here")
+        } else if (grid[selected.x][selected.y] === "O") {
+          console.log(grid[selected.x][selected.y])
           console.log("Impossible movement! Obstacle!")
+        } else if (grid[selected.x][selected.y + 1] === "R" || grid[selected.x + 1][selected.y] === "T") {
+          console.log("be careful!")
         } else {
+          selected.y++
           console.log("moveForward was called")
         }
-        console.log(`${select.name} position: x: ${select.x} y: ${select.y}`)
+        console.log(`${selected.name} position: x: ${selected.x} y: ${selected.y}`)
         break
     }
-    select.travelLog.push([select.x, select.y])
+    selected.path.push([selected.x, selected.y])
   }
 }
 
 // ======================
 
-// Lista de comandos
-function listCommands(listString, select) {
-  for (let i = 0; i < listString.length; i++) {
-    if (listString[i] === 'r') {
-      turnRight(select)
-    } else if (listString[i] === 'l') {
-      turnLeft(select)
-    } else if (listString[i] === 'f') {
-      moveForward(select)
-    } else if (listString[i] === 'b') {
-      moveBackwards(select)
+// List Commands
+function listCommands(travelLog, selected) {
+  for (let i = 0; i < travelLog.length; i++) {
+    if (travelLog[i] === 'r') {
+      turnRight(selected)
+    } else if (travelLog[i] === 'l') {
+      turnLeft(selected)
+    } else if (travelLog[i] === 'f') {
+      moveForward(selected)
+    } else if (travelLog[i] === 'b') {
+      moveBackwards(selected)
     } else {
       console.log("command invalid!")
     }
@@ -297,17 +255,12 @@ function listCommands(listString, select) {
 
 // ======================
 
+console.log(`selected: ${selected.name}`)
+console.log(`${selected.name} direction ${selected.direction}`)
 
-console.log(`Select: ${select.name}`)
-console.log(`${select.name} direction ${select.direction}`)
-
-listCommands('rffffflbrflb', select)
-selectRover()
-listCommands('ffflff', select)
-selectRover()
-listCommands('rff', select)
-
+listCommands('rffffffrff', selected)
+selectedRover()
+listCommands('fffffffflfff', selected)
+// selectedRover()
 
 console.log(grid.join("\n"))
-
-
